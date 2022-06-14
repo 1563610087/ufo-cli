@@ -296,6 +296,7 @@ class InitCommand extends Command {
     async installNormalTemplate() {
         log.verbose('templateNpm', this.templateNpm);
         // 拷贝模板代码至当前目录
+        //根据输入的项目名称创建文件夹，然后将模板拷贝至当前文件夹下。
         let spinner = spinnerStart('正在安装模板...');
         await sleep();
         try {
@@ -310,14 +311,14 @@ class InitCommand extends Command {
             spinner.stop(true);
             log.success('模板安装成功');
         }
-        const templateIgnore = this.templateInfo.ignore || [];
-        const ignore = ['**/node_modules/**', ...templateIgnore];
-        await this.ejsRender({ ignore });
-        const { installCommand, startCommand } = this.templateInfo;
-        // 依赖安装
-        await this.execCommand(installCommand, '依赖安装失败！');
-        // 启动命令执行
-        await this.execCommand(startCommand, '启动执行命令失败！');
+        // const templateIgnore = this.templateInfo.ignore || [];
+        // const ignore = ['**/node_modules/**', ...templateIgnore];
+        // await this.ejsRender({ ignore });
+        // const { installCommand, startCommand } = this.templateInfo;
+        // // 依赖安装
+        // await this.execCommand(installCommand, '依赖安装失败！');
+        // // 启动命令执行
+        // await this.execCommand(startCommand, '启动执行命令失败！');
     }
 
     async installCustomTemplate() {

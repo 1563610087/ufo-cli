@@ -5,9 +5,9 @@ module.exports =core
 const pkg = require('../../../package.json')
 const log = require('../../../utils/log')
 const constants = require('./const')
-// const semver = require('semver')
+const semver = require('semver')
 const path = require('path')
-// const colors = require('colors/safe')
+const colors = require('colors/safe')
 const userHome = require('user-home')
 const {Command}=require('commander')
 const pathExists = require('path-exists').sync
@@ -43,7 +43,9 @@ function registryCommander() {
   .name(Object.keys(pkg.bin)[0])
   .usage('<command> [options]')
   .version(pkg.version)
+  //下面这行是添加选项的第一种模式，不带参数，值为布尔类型
   .option('-d,--debug','是否开启调试模式',false)
+  //下面这行是添加选项的第二种模式，带参数，值为用户输入的类型
   .option('-tp,--targetPath <targetPath>','是否开启本地调试模式','')
   //监听未定义的命令功能未实现
 
@@ -101,6 +103,7 @@ function createEnvironment() {
   }else{
     cliConfig.cliHome=path.join(userHome,constants.DEFAULT_CLI_HOME)
   }
+  //脚手架的目录位置
   process.env.CLI_HOME_PATH=cliConfig.cliHome
 }
 
