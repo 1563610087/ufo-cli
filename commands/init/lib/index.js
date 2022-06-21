@@ -392,7 +392,6 @@ class InitCommand extends Command {
 }
 
 function init(args) {
-    // console.log(projectName,process.env.CLI_TARGET_PATH)
     return new InitCommand(args)
 }
 

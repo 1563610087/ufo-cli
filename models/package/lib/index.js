@@ -16,9 +16,9 @@ class Package {
         if (!isObject(options)) {
             throw new Error('Package类的参数options必须为对象')
         }
-        //当前的路径
+        //目标路径，就是项目初始化要放到的位置
         this.targetPath = options.targetPath
-        //缓存路径
+        //缓存路径，将项目模板缓存下来的位置
         this.storePath = options.storePath
         this.packageName = options.packageName
         this.packageVersion = options.packageVersion
