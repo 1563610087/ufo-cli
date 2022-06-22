@@ -1,18 +1,18 @@
 'use strict';
 
-const Command = require('../../../models/command/lib/index')
+const Command = require('../../models/command/lib/index')
 const fs = require('fs')
 const fse = require('fs-extra');
 const path = require('path')
 const fsExtra = require('fs-extra')
 const inquirer = require('inquirer')
-const log = require('../../../utils/log/index')
+const log = require('../../utils/log/index')
 const userHome = require('user-home')
 const glob = require('glob')
 const semver = require('semver')
 const ejs = require('ejs')
-const Package = require('../../../models/package/lib/index');
-const { spinnerStart, sleep, execAsync } = require('../../../utils/utils/lib/index');
+const Package = require('../../models/package/lib/index')
+const { spinnerStart, sleep, execAsync } = require('../../utils/utils/lib/index')
 
 const TYPE_PROJECT = 'project';
 const TYPE_COMPONENT = 'component';
@@ -118,60 +118,12 @@ class InitCommand extends Command {
         log.verbose('type', type);
         this.template = this.template.filter(template =>
             template.tag.includes(type));
-        const title = type === TYPE_PROJECT ? '项目' : '组件';
-        const projectNamePrompt = {
-            type: 'input',
-            name: 'projectName',
-            message: `请输入${title}名称`,
-            default: '',
-            validate: function (v) {
-                const done = this.async();
-                setTimeout(function () {
-                    // 1.首字符必须为英文字符
-                    // 2.尾字符必须为英文或数字，不能为字符
-                    // 3.字符仅允许"-_"
-                    if (!isValidName(v)) {
-                        done(`请输入合法的${title}名称`);
-                        return;
-                    }
-                    done(null, true);
-                }, 0);
-            },
-            filter: function (v) {
-                return v;
-            },
-        };
         const projectPrompt = [];
-        if (!isProjectNameValid) {
-            projectPrompt.push(projectNamePrompt);
-        }
-        projectPrompt.push({
-            type: 'input',
-            name: 'projectVersion',
-            message: `请输入${title}版本号`,
-            default: '1.0.0',
-            validate: function (v) {
-                const done = this.async();
-                setTimeout(function () {
-                    if (!(!!semver.valid(v))) {
-                        done('请输入合法的版本号');
-                        return;
-                    }
-                    done(null, true);
-                }, 0);
-            },
-            filter: function (v) {
-                if (!!semver.valid(v)) {
-                    return semver.valid(v);
-                } else {
-                    return v;
-                }
-            },
-        },
+        projectPrompt.push(
             {
                 type: 'list',
                 name: 'projectTemplate',
-                message: `请选择${title}模板`,
+                message: `请选择模板`,
                 choices: this.createTemplateChoice(),
             });
         if (type === TYPE_PROJECT) {
@@ -231,7 +183,7 @@ class InitCommand extends Command {
         this.templateInfo = templateInfo;
         const templateNpm = new Package({
             targetPath,
-            storePath:storeDir,
+            storePath: storeDir,
             packageName: npmName,
             packageVersion: version,
         });
@@ -302,6 +254,7 @@ class InitCommand extends Command {
         try {
             const templatePath = this.templateNpm.cacheFilePath;
             const targetPath = process.cwd();
+            console.log(templatePath,targetPath)
             fse.ensureDirSync(templatePath);
             fse.ensureDirSync(targetPath);
             fse.copySync(templatePath, targetPath);
@@ -352,34 +305,34 @@ class InitCommand extends Command {
         const dir = process.cwd();
         const projectInfo = this.projectInfo;
         return new Promise((resolve, reject) => {
-          glob('**', {
-            cwd: dir,
-            ignore: options.ignore || '',
-            nodir: true,
-          }, function(err, files) {
-            if (err) {
-              reject(err);
-            }
-            Promise.all(files.map(file => {
-              const filePath = path.join(dir, file);
-              return new Promise((resolve1, reject1) => {
-                ejs.renderFile(filePath, projectInfo, {}, (err, result) => {
-                  if (err) {
-                    reject1(err);
-                  } else {
-                    fse.writeFileSync(filePath, result);
-                    resolve1(result);
-                  }
+            glob('**', {
+                cwd: dir,
+                ignore: options.ignore || '',
+                nodir: true,
+            }, function (err, files) {
+                if (err) {
+                    reject(err);
+                }
+                Promise.all(files.map(file => {
+                    const filePath = path.join(dir, file);
+                    return new Promise((resolve1, reject1) => {
+                        ejs.renderFile(filePath, projectInfo, {}, (err, result) => {
+                            if (err) {
+                                reject1(err);
+                            } else {
+                                fse.writeFileSync(filePath, result);
+                                resolve1(result);
+                            }
+                        });
+                    });
+                })).then(() => {
+                    resolve();
+                }).catch(err => {
+                    reject(err);
                 });
-              });
-            })).then(() => {
-              resolve();
-            }).catch(err => {
-              reject(err);
             });
-          });
         });
-      }
+    }
 
     isDirEmpty(localPath) {
         let fileList = fs.readdirSync(localPath);

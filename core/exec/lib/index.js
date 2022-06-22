@@ -6,49 +6,50 @@ const log = require('../../../utils/log/index');
 const path = require('path');
 const { exec: spawn } = require('../../../utils/utils/lib/index');
 
-const SETTINGS={
-    // 'init':"@ufo-zhu/init"
-    'init':"uglify-js"
-}
+// const SETTINGS={
+//     // 'init':"@ufo-zhu/init"
+//     'init':"uglify-js"
+// }
 
-const CACHE_DIR='dependencies'
+// const CACHE_DIR='dependencies'
 
 async function exec() {
-    let targetPath=process.env.CLI_TARGET_PATH
-    let pkg=''
-    const homePath = process.env.CLI_HOME_PATH
-    const cmdObj=arguments[arguments.length-1]
-    const cmdName=cmdObj._name
-    const packageName=SETTINGS[cmdName]
-    const packageVersion='latest'
-    let storePath=''
-    if(!targetPath){
-        targetPath=path.resolve(homePath,CACHE_DIR)
-        storePath=path.resolve(targetPath,'node_modules')
-        log.verbose('targetPath',targetPath)
-        log.verbose('homePath',homePath)
-        pkg=new Package({
-            targetPath,
-            storePath,
-            packageName,
-            packageVersion
-        })
-        if(await pkg.exists()) {
-            //更新package
-            await pkg.update()
-        }else{
-            //安装package
-            await pkg.install()
-        }
-    }else{
-        pkg=new Package({
-            targetPath,
-            packageName,
-            packageVersion
-        })
-    }
+    //脚手架检查更新
+    // let targetPath=process.env.CLI_TARGET_PATH
+    // let pkg=''
+    // const homePath = process.env.CLI_HOME_PATH
+    // const cmdObj=arguments[arguments.length-1]
+    // const cmdName=cmdObj._name
+    // const packageName=SETTINGS[cmdName]
+    // const packageVersion='latest'
+    // let storePath=''
+    // if(!targetPath){
+    //     targetPath=path.resolve(homePath,CACHE_DIR)
+    //     storePath=path.resolve(targetPath,'node_modules')
+    //     log.verbose('targetPath',targetPath)
+    //     log.verbose('homePath',homePath)
+    //     pkg=new Package({
+    //         targetPath,
+    //         storePath,
+    //         packageName,
+    //         packageVersion
+    //     })
+    //     if(await pkg.exists()) {
+    //         //更新package
+    //         await pkg.update()
+    //     }else{
+    //         //安装package
+    //         await pkg.install()
+    //     }
+    // }else{
+    //     pkg=new Package({
+    //         targetPath,
+    //         packageName,
+    //         packageVersion
+    //     })
+    // }
     // const rootFilePath=pkg.getRootFilePath()
-    const rootFilePath='../../../commands/init/lib/index.js'
+    const rootFilePath='../../../commands/init/index.js'
     if(rootFilePath){
         try {
             // 在当前进程中调用
